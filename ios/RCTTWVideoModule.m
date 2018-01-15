@@ -10,6 +10,8 @@
 
 #import "RCTTWSerializable.h"
 
+@import AVFoundation;
+
 static NSString* roomDidConnect               = @"roomDidConnect";
 static NSString* roomDidDisconnect            = @"roomDidDisconnect";
 static NSString* roomDidFailToConnect         = @"roomDidFailToConnect";
@@ -97,6 +99,35 @@ RCT_EXPORT_MODULE();
   }
 }
 
+RCT_EXPORT_METHOD(resetAudioSession) {
+  NSLog(@"########## resetAudioSession");
+    [[TVIAudioController sharedController] stopAudio];
+
+    NSError *error = nil;
+    [[AVAudioSession sharedInstance] setActive:NO
+                                   withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation
+                                         error:&error];
+    if (error) {
+        NSLog(@"%@", [NSString stringWithFormat:@"##################Couldn't deactivate AVAudioSession. %@", error]);
+    }
+}
+
+RCT_EXPORT_METHOD(setupAudioSession) {
+  NSLog(@"########## setupAudioSession");
+    // In this example we don't want TwilioVideo to dynamically configure and activate / deactivate the AVAudioSession.
+    // Instead we will setup audio once, and deal with activation and de-activation manually.
+    [[TVIAudioController sharedController] configureAudioSession:TVIAudioOutputVideoChatDefault];
+
+    // This is similar to when CallKit is used, but instead we will activate AVAudioSession ourselves.
+    NSError *error = nil;
+    [[AVAudioSession sharedInstance] setActive:YES error:&error];
+    if (error) {
+        NSLog(@"%@", [NSString stringWithFormat:@"################Couldn't activate AVAudioSession. %@", error]);
+    }
+
+    [[TVIAudioController sharedController] startAudio];
+}
+
 RCT_EXPORT_METHOD(startLocalVideo:(BOOL)screenShare) {
   if (screenShare) {
     UIViewController *rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
@@ -158,6 +189,9 @@ RCT_EXPORT_METHOD(flipCamera) {
 }
 
 RCT_EXPORT_METHOD(connect:(NSString *)accessToken roomName:(NSString *)roomName) {
+// Since we are configuring audio session explicitly, we will call setupAudioSession every time we attempt to connect.
+    [self setupAudioSession];
+
   TVIConnectOptions *connectOptions = [TVIConnectOptions optionsWithToken:accessToken block:^(TVIConnectOptionsBuilder * _Nonnull builder) {
     if (self.localVideoTrack) {
       builder.videoTracks = @[self.localVideoTrack];
@@ -216,6 +250,8 @@ RCT_EXPORT_METHOD(disconnect) {
 
 - (void)room:(TVIRoom *)room didDisconnectWithError:(nullable NSError *)error {
   self.room = nil;
+
+  [self resetAudioSession];
 
   NSMutableDictionary *body = [@{ @"roomName": room.name } mutableCopy];
 
