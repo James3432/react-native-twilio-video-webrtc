@@ -1,33 +1,28 @@
 /**
- * Component for Twilio Video local views.
+ * Component for Twilio Video participant views.
  *
  * Authors:
  *   Jonathan Chang <slycoder@gmail.com>
  */
 
-import {
-  requireNativeComponent,
-  View
-} from 'react-native'
+import { requireNativeComponent, View } from 'react-native'
+import PropTypes from 'prop-types'
 import React from 'react'
 
-const propTypes = {
-  ...View.propTypes
-}
+class TwilioRemotePreview extends React.Component {
+  static propTypes = {
+    ...View.propTypes,
+    trackId: PropTypes.string.isRequired,
+  }
 
-class TwilioVideoPreview extends React.Component {
-  render () {
-    return (
-      <NativeTwilioVideoPreview {...this.props} />
-    )
+  render() {
+    return <NativeTwilioRemotePreview {...this.props} />
   }
 }
 
-TwilioVideoPreview.propTypes = propTypes
-
-const NativeTwilioVideoPreview = requireNativeComponent(
-  'RNTwilioVideoPreview',
-  TwilioVideoPreview
+const NativeTwilioRemotePreview = requireNativeComponent(
+  'RNTwilioRemotePreview',
+  TwilioRemotePreview,
 )
 
-module.exports = TwilioVideoPreview
+module.exports = TwilioRemotePreview
