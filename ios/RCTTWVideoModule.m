@@ -86,12 +86,11 @@ RCT_EXPORT_MODULE();
 
 - (void)addParticipantView:(TVIVideoView *)view identity:(NSString *)identity  trackId:(NSString *)trackId {
   // Lookup for the participant in the room
-  for (TVIParticipant *participant in self.room.remoteParticipants) {
+  for (TVIRemoteParticipant *participant in self.room.remoteParticipants) {
     if ([participant.identity isEqualToString:identity]) {
-
       // Lookup for the given trackId
-      for (TVIVideoTrack *videoTrack in participant.videoTracks) {
-        [videoTrack addRenderer:view];
+      for (TVIRemoteVideoTrackPublication *videoTrackPublication in participant.videoTracks) {
+        [videoTrackPublication.videoTrack addRenderer:view];
       }
     }
   }
