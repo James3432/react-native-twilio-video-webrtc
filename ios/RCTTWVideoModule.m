@@ -86,7 +86,7 @@ RCT_EXPORT_MODULE();
 
 - (void)addParticipantView:(TVIVideoView *)view identity:(NSString *)identity  trackId:(NSString *)trackId {
   // Lookup for the participant in the room
-  for (TVIParticipant *participant in self.room.participants) {
+  for (TVIParticipant *participant in self.room.remoteParticipants) {
     if ([participant.identity isEqualToString:identity]) {
 
       // Lookup for the given trackId
@@ -99,7 +99,7 @@ RCT_EXPORT_MODULE();
 
 - (void)logMessage:(NSString *)msg {
     NSLog(@"%@", msg);
-    self.messageLabel.text = msg;
+//    self.messageLabel.text = msg;
 }
 
 RCT_EXPORT_METHOD(startLocalVideo:(BOOL)screenShare) {
@@ -107,17 +107,17 @@ RCT_EXPORT_METHOD(startLocalVideo:(BOOL)screenShare) {
     UIViewController *rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
     self.screen = [[TVIScreenCapturer alloc] initWithView:rootViewController.view];
 
-    self.localVideoTrack = [TVILocalVideoTrack trackWithCapturer:self.screen enabled:YES constraints:[self videoConstraints]];
+    self.localVideoTrack = [TVILocalVideoTrack trackWithCapturer:self.screen enabled:YES constraints:[self videoConstraints] name:@"Screen"];
   } else if ([TVICameraCapturer availableSources].count > 0) {
     self.camera = [[TVICameraCapturer alloc] init];
     self.camera.delegate = self;
 
-    self.localVideoTrack = [TVILocalVideoTrack trackWithCapturer:self.camera enabled:YES constraints:[self videoConstraints]];
+    self.localVideoTrack = [TVILocalVideoTrack trackWithCapturer:self.camera enabled:YES constraints:[self videoConstraints] name:@"Camera"];
   }
 }
 
 RCT_EXPORT_METHOD(startLocalAudio) {
-  self.localAudioTrack = [TVILocalAudioTrack trackWithOptions:nil enabled:YES];
+  self.localAudioTrack = [TVILocalAudioTrack trackWithOptions:nil enabled:YES name:@"Microphone"];
 }
 
 RCT_EXPORT_METHOD(stopLocalVideo) {
