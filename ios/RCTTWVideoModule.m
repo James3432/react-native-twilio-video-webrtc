@@ -210,8 +210,9 @@ RCT_EXPORT_METHOD(disconnect) {
 
 - (void)didConnectToRoom:(TVIRoom *)room {
   NSMutableArray *participants = [NSMutableArray array];
+  [self logMessage:[NSString stringWithFormat:@"Connected to room %@ as %@", room.name, room.localParticipant.identity]];
 
-  for (TVIParticipant *p in room.participants) {
+  for (TVIRemoteParticipant *p in room.remoteParticipants) {
     p.delegate = self;
     [participants addObject:[p toJSON]];
   }
@@ -220,6 +221,7 @@ RCT_EXPORT_METHOD(disconnect) {
 }
 
 - (void)room:(TVIRoom *)room didDisconnectWithError:(nullable NSError *)error {
+  [self logMessage:[NSString stringWithFormat:@"Disconncted from room %@, error = %@", room.name, error]];
   self.room = nil;
 
   NSMutableDictionary *body = [@{ @"roomName": room.name } mutableCopy];
@@ -232,7 +234,8 @@ RCT_EXPORT_METHOD(disconnect) {
 }
 
 - (void)room:(TVIRoom *)room didFailToConnectWithError:(nonnull NSError *)error{
-  self.room = nil;
+    [self logMessage:[NSString stringWithFormat:@"Failed to connect to room, error = %@", error]];
+    self.room = nil;
 
   NSMutableDictionary *body = [@{ @"roomName": room.name } mutableCopy];
 
@@ -244,13 +247,19 @@ RCT_EXPORT_METHOD(disconnect) {
 }
 
 
-- (void)room:(TVIRoom *)room participantDidConnect:(TVIParticipant *)participant {
+- (void)room:(TVIRoom *)room participantDidConnect:(TVIRemoteParticipant *)participant {
+    [self logMessage:[NSString stringWithFormat:@"Participant %@ connected with %lu audio and %lu video tracks",
+                      participant.identity,
+                      (unsigned long)[participant.audioTracks count],
+                      (unsigned long)[participant.videoTracks count]]];
+
   participant.delegate = self;
 
   [self sendEventWithName:roomParticipantDidConnect body:@{ @"roomName": room.name, @"participant": [participant toJSON] }];
 }
 
 - (void)room:(TVIRoom *)room participantDidDisconnect:(TVIParticipant *)participant {
+    [self logMessage:[NSString stringWithFormat:@"Room %@ participant %@ disconnected", room.name, participant.identity]];
   [self sendEventWithName:roomParticipantDidDisconnect body:@{ @"roomName": room.name, @"participant": [participant toJSON] }];
 }
 
