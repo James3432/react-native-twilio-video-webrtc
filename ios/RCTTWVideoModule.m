@@ -10,6 +10,8 @@
 
 #import "RCTTWSerializable.h"
 
+#import "ExampleCoreAudioDevice.h"
+
 static NSString* roomDidConnect               = @"roomDidConnect";
 static NSString* roomDidDisconnect            = @"roomDidDisconnect";
 static NSString* roomDidFailToConnect         = @"roomDidFailToConnect";
@@ -98,10 +100,12 @@ RCT_EXPORT_MODULE();
 
 - (void)logMessage:(NSString *)msg {
   // Uncomment for debugging purposes
-  //  NSLog(@"%@", msg);
+  NSLog(@"%@", msg);
 }
 
 RCT_EXPORT_METHOD(startLocalVideo:(BOOL)screenShare) {
+  TwilioVideo.audioDevice = [[ExampleCoreAudioDevice alloc] init];
+  [self logMessage:[NSString stringWithFormat:@"Start local video with screenshare %d", screenShare]];
   if (screenShare) {
     UIViewController *rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
     self.screen = [[TVIScreenCapturer alloc] initWithView:rootViewController.view];
