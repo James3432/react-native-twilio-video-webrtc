@@ -52,6 +52,10 @@ static size_t kMaximumFramesPerBuffer = 1156;
     [self unregisterAVAudioSessionObservers];
 }
 
++ (NSString *)description {
+    return @"CoreAudio Stereo Playout";
+}
+
 /*
  * Determine at runtime the maximum slice size used by RemoteIO. Setting the stream format and sample rate doesn't
  * appear to impact the maximum size so we prefer to read this value once at initialization time.
@@ -454,7 +458,12 @@ static OSStatus ExampleCoreAudioDevicePlayoutCallback(void *refCon,
         NSLog(@"The rendering format changed. Restarting with %@", activeFormat);
         // Signal a change by clearing our cached format, and allowing TVIAudioDevice to drive the process.
         _renderingFormat = nil;
-        TVIAudioDeviceFormatChanged(self.renderingContext->deviceContext);
+
+        @synchronized(self) {
+            if (self.renderingContext) {
+                TVIAudioDeviceFormatChanged(self.renderingContext->deviceContext);
+            }
+        }
     }
 }
 

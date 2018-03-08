@@ -11,6 +11,7 @@
 #import "RCTTWSerializable.h"
 
 #import "ExampleCoreAudioDevice.h"
+#import "ExampleAudioEngineDevice.h"
 
 static NSString* roomDidConnect               = @"roomDidConnect";
 static NSString* roomDidDisconnect            = @"roomDidDisconnect";
@@ -104,7 +105,9 @@ RCT_EXPORT_MODULE();
 }
 
 RCT_EXPORT_METHOD(startLocalVideo:(BOOL)screenShare) {
-  TwilioVideo.audioDevice = [[ExampleCoreAudioDevice alloc] init];
+  [TwilioVideo setLogLevel:TVILogLevelDebug];
+  TwilioVideo.audioDevice = [[ExampleAudioEngineDevice alloc] init];
+
   [self logMessage:[NSString stringWithFormat:@"Start local video with screenshare %d", screenShare]];
   if (screenShare) {
     UIViewController *rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
@@ -167,6 +170,10 @@ RCT_EXPORT_METHOD(flipCamera) {
 
 RCT_EXPORT_METHOD(connect:(NSString *)accessToken roomName:(NSString *)roomName) {
   TVIConnectOptions *connectOptions = [TVIConnectOptions optionsWithToken:accessToken block:^(TVIConnectOptionsBuilder * _Nonnull builder) {
+
+    // [builder setPreferredAudioCodecs:@[@"Opus"]];
+    // [builder setPreferredVideoCodecs:@[@"VP8"]];
+    
     if (self.localVideoTrack) {
       builder.videoTracks = @[self.localVideoTrack];
     }
