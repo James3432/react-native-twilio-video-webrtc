@@ -11,7 +11,7 @@
 #import "RCTTWSerializable.h"
 
 #import "ExampleCoreAudioDevice.h"
-#import "ExampleAudioEngineDevice.h"
+#import "ExampleAVAudioEngineDevice.h"
 
 static NSString* roomDidConnect               = @"roomDidConnect";
 static NSString* roomDidDisconnect            = @"roomDidDisconnect";
@@ -106,7 +106,7 @@ RCT_EXPORT_MODULE();
 
 RCT_EXPORT_METHOD(startLocalVideo:(BOOL)screenShare) {
   [TwilioVideo setLogLevel:TVILogLevelDebug];
-  TwilioVideo.audioDevice = [[ExampleAudioEngineDevice alloc] init];
+  TwilioVideo.audioDevice = [[ExampleAVAudioEngineDevice alloc] init];
 
   [self logMessage:[NSString stringWithFormat:@"Start local video with screenshare %d", screenShare]];
   if (screenShare) {
