@@ -8,11 +8,7 @@
 
 import { Component } from 'react'
 import PropTypes from 'prop-types'
-import {
-  NativeModules,
-  NativeEventEmitter,
-  View
-} from 'react-native'
+import { NativeModules, NativeEventEmitter, View } from 'react-native'
 
 const { TWVideoModule } = NativeModules
 
@@ -104,7 +100,7 @@ export default class extends Component {
      * @param {{error}} The error message description
      */
     onCameraDidStopRunning: PropTypes.func,
-    ...View.propTypes
+    ...View.propTypes,
   }
 
   constructor(props) {
@@ -171,7 +167,11 @@ export default class extends Component {
 
   _startLocalVideo() {
     const screenShare = this.props.screenShare || false
-    TWVideoModule.startLocalVideo(screenShare)
+    try {
+      TWVideoModule.startLocalVideo(screenShare)
+    } catch (err) {
+      console.warn('Cannot start local video', err)
+    }
   }
 
   _stopLocalVideo() {
@@ -193,48 +193,76 @@ export default class extends Component {
 
   _registerEvents() {
     this._subscriptions = [
-      this._eventEmitter.addListener('roomDidConnect', (data) => {
-        if (this.props.onRoomDidConnect) { this.props.onRoomDidConnect(data) }
+      this._eventEmitter.addListener('roomDidConnect', data => {
+        if (this.props.onRoomDidConnect) {
+          this.props.onRoomDidConnect(data)
+        }
       }),
-      this._eventEmitter.addListener('roomDidDisconnect', (data) => {
-        if (this.props.onRoomDidDisconnect) { this.props.onRoomDidDisconnect(data) }
+      this._eventEmitter.addListener('roomDidDisconnect', data => {
+        if (this.props.onRoomDidDisconnect) {
+          this.props.onRoomDidDisconnect(data)
+        }
       }),
-      this._eventEmitter.addListener('roomDidFailToConnect', (data) => {
-        if (this.props.onRoomDidFailToConnect) { this.props.onRoomDidFailToConnect(data) }
+      this._eventEmitter.addListener('roomDidFailToConnect', data => {
+        if (this.props.onRoomDidFailToConnect) {
+          this.props.onRoomDidFailToConnect(data)
+        }
       }),
-      this._eventEmitter.addListener('roomParticipantDidConnect', (data) => {
-        if (this.props.onRoomParticipantDidConnect) { this.props.onRoomParticipantDidConnect(data) }
+      this._eventEmitter.addListener('roomParticipantDidConnect', data => {
+        if (this.props.onRoomParticipantDidConnect) {
+          this.props.onRoomParticipantDidConnect(data)
+        }
       }),
-      this._eventEmitter.addListener('roomParticipantDidDisconnect', (data) => {
-        if (this.props.onRoomParticipantDidDisconnect) { this.props.onRoomParticipantDidDisconnect(data) }
+      this._eventEmitter.addListener('roomParticipantDidDisconnect', data => {
+        if (this.props.onRoomParticipantDidDisconnect) {
+          this.props.onRoomParticipantDidDisconnect(data)
+        }
       }),
-      this._eventEmitter.addListener('participantAddedVideoTrack', (data) => {
-        if (this.props.onParticipantAddedVideoTrack) { this.props.onParticipantAddedVideoTrack(data) }
+      this._eventEmitter.addListener('participantAddedVideoTrack', data => {
+        if (this.props.onParticipantAddedVideoTrack) {
+          this.props.onParticipantAddedVideoTrack(data)
+        }
       }),
-      this._eventEmitter.addListener('participantRemovedVideoTrack', (data) => {
-        if (this.props.onParticipantRemovedVideoTrack) { this.props.onParticipantRemovedVideoTrack(data) }
+      this._eventEmitter.addListener('participantRemovedVideoTrack', data => {
+        if (this.props.onParticipantRemovedVideoTrack) {
+          this.props.onParticipantRemovedVideoTrack(data)
+        }
       }),
-      this._eventEmitter.addListener('participantAddedAudioTrack', (data) => {
-        if (this.props.onParticipantAddedAudioTrack) { this.props.onParticipantAddedAudioTrack(data) }
+      this._eventEmitter.addListener('participantAddedAudioTrack', data => {
+        if (this.props.onParticipantAddedAudioTrack) {
+          this.props.onParticipantAddedAudioTrack(data)
+        }
       }),
-      this._eventEmitter.addListener('participantRemovedAudioTrack', (data) => {
-        if (this.props.onParticipantRemovedAudioTrack) { this.props.onParticipantRemovedAudioTrack(data) }
+      this._eventEmitter.addListener('participantRemovedAudioTrack', data => {
+        if (this.props.onParticipantRemovedAudioTrack) {
+          this.props.onParticipantRemovedAudioTrack(data)
+        }
       }),
-      this._eventEmitter.addListener('participantEnabledTrack', (data) => {
-        if (this.props.onParticipantEnabledTrack) { this.props.onParticipantEnabledTrack(data) }
+      this._eventEmitter.addListener('participantEnabledTrack', data => {
+        if (this.props.onParticipantEnabledTrack) {
+          this.props.onParticipantEnabledTrack(data)
+        }
       }),
-      this._eventEmitter.addListener('participantDisabledTrack', (data) => {
-        if (this.props.onParticipantDisabledTrack) { this.props.onParticipantDisabledTrack(data) }
+      this._eventEmitter.addListener('participantDisabledTrack', data => {
+        if (this.props.onParticipantDisabledTrack) {
+          this.props.onParticipantDisabledTrack(data)
+        }
       }),
-      this._eventEmitter.addListener('cameraDidStart', (data) => {
-        if (this.props.onCameraDidStart) { this.props.onCameraDidStart(data) }
+      this._eventEmitter.addListener('cameraDidStart', data => {
+        if (this.props.onCameraDidStart) {
+          this.props.onCameraDidStart(data)
+        }
       }),
-      this._eventEmitter.addListener('cameraWasInterrupted', (data) => {
-        if (this.props.onCameraWasInterrupted) { this.props.onCameraWasInterrupted(data) }
+      this._eventEmitter.addListener('cameraWasInterrupted', data => {
+        if (this.props.onCameraWasInterrupted) {
+          this.props.onCameraWasInterrupted(data)
+        }
       }),
-      this._eventEmitter.addListener('cameraDidStopRunning', (data) => {
-        if (this.props.onCameraDidStopRunning) { this.props.onCameraDidStopRunning(data) }
-      })
+      this._eventEmitter.addListener('cameraDidStopRunning', data => {
+        if (this.props.onCameraDidStopRunning) {
+          this.props.onCameraDidStopRunning(data)
+        }
+      }),
     ]
   }
 
