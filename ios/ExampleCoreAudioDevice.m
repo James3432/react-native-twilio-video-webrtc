@@ -244,9 +244,7 @@ static OSStatus ExampleCoreAudioDevicePlayoutCallback(void *refCon,
         NSLog(@"Error setting IOBuffer duration: %@", error);
     }
 
-    if (![session setCategory:AVAudioSessionCategoryPlayback error:&error]) {
-        NSLog(@"Error setting session category: %@", error);
-    }
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker error:nil];
 
     [self registerAVAudioSessionObservers];
 
