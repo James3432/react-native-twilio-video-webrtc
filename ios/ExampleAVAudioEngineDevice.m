@@ -785,11 +785,16 @@ static OSStatus ExampleAVAudioEngineDeviceRecordCallback(void *refCon,
             // With CallKit, AVAudioSession may change the sample rate during a configuration change.
             // If a valid route change occurs we may want to update our audio graph to reflect the new output device.
             @synchronized(self) {
-                if (self.renderingContext->deviceContext) {
-                    TVIAudioDeviceExecuteWorkerBlock(self.renderingContext->deviceContext, ^{
-                        [self handleValidRouteChange];
-                    });
+              @try {
+                if (self && self.renderingContext->deviceContext) {
+                  TVIAudioDeviceExecuteWorkerBlock(self.renderingContext->deviceContext, ^{
+                    [self handleValidRouteChange];
+                  });
                 }
+              } @catch (NSException *exception) {
+                NSLog(@"handle exception in twilio route change %@", exception.reason);
+              }
+
             }
             break;
     }

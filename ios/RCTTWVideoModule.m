@@ -142,27 +142,31 @@ RCT_EXPORT_MODULE();
 //}
 
 RCT_EXPORT_METHOD(startLocalVideo:(BOOL)screenShare) {
-  [TwilioVideo setLogLevel:TVILogLevelDebug];
+  //  [TwilioVideo setLogLevel:TVILogLevelDebug];
+  @try {
     if (@available(iOS 11, *)) {
-        // iOS 11 (or newer) ObjC code
-        TwilioVideo.audioDevice = [[ExampleAVAudioEngineDevice alloc] init];
+      // iOS 11 (or newer) ObjC code
+      TwilioVideo.audioDevice = [[ExampleAVAudioEngineDevice alloc] init];
     } else {
-        // iOS 10 or older code
-        TwilioVideo.audioDevice = [TVIDefaultAudioDevice audioDevice];
+      // iOS 10 or older code
+      TwilioVideo.audioDevice = [TVIDefaultAudioDevice audioDevice];
     }
-  
-
-  [self logMessage:[NSString stringWithFormat:@"Start local video with screenshare %d", screenShare]];
-  if (screenShare) {
-    UIViewController *rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
-    self.screen = [[TVIScreenCapturer alloc] initWithView:rootViewController.view];
     
-    self.localVideoTrack = [TVILocalVideoTrack trackWithCapturer:self.screen enabled:YES constraints:[self videoConstraints] name:@"Screen"];
-  } else if ([TVICameraCapturer availableSources].count > 0) {
-    self.camera = [[TVICameraCapturer alloc] init];
-    self.camera.delegate = self;
     
-    self.localVideoTrack = [TVILocalVideoTrack trackWithCapturer:self.camera enabled:YES constraints:[self videoConstraints] name:@"Camera"];
+    [self logMessage:[NSString stringWithFormat:@"Start local video with screenshare %d", screenShare]];
+    if (screenShare) {
+      UIViewController *rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
+      self.screen = [[TVIScreenCapturer alloc] initWithView:rootViewController.view];
+      
+      self.localVideoTrack = [TVILocalVideoTrack trackWithCapturer:self.screen enabled:YES constraints:[self videoConstraints] name:@"Screen"];
+    } else if ([TVICameraCapturer availableSources].count > 0) {
+      self.camera = [[TVICameraCapturer alloc] init];
+      self.camera.delegate = self;
+      
+      self.localVideoTrack = [TVILocalVideoTrack trackWithCapturer:self.camera enabled:YES constraints:[self videoConstraints] name:@"Camera"];
+    }
+  } @catch (NSException *exception) {
+    NSLog(@"exception happend during start local video %@", exception.reason);
   }
 }
 
