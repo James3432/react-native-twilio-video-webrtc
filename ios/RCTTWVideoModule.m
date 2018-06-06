@@ -104,43 +104,6 @@ RCT_EXPORT_MODULE();
   NSLog(@"%@", msg);
 }
 
-//RCT_EXPORT_METHOD(pauseVideo: (BOOL)isPaused) {
-//    if (isPaused) {
-//        [self resetAudioSession];
-//    } else {
-//        [self setupAudioSession];
-//    }
-//}
-//
-//- (void)resetAudioSession {
-//    NSLog(@"########## resetAudioSession");
-//    [[TVIAudioController sharedController] stopAudio];
-//
-//    NSError *error = nil;
-//    [[AVAudioSession sharedInstance] setActive:NO
-//                                   withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation
-//                                         error:&error];
-//    if (error) {
-//        NSLog(@"%@", [NSString stringWithFormat:@"##################Couldn't deactivate AVAudioSession. %@", error]);
-//    }
-//}
-//
-//- (void) setupAudioSession {
-//    NSLog(@"########## setupAudioSession");
-//    // In this example we don't want TwilioVideo to dynamically configure and activate / deactivate the AVAudioSession.
-//    // Instead we will setup audio once, and deal with activation and de-activation manually.
-//    [[TVIAudioController sharedController] configureAudioSession:TVIAudioOutputVideoChatDefault];
-//
-//    // This is similar to when CallKit is used, but instead we will activate AVAudioSession ourselves.
-//    NSError *error = nil;
-//    [[AVAudioSession sharedInstance] setActive:YES error:&error];
-//    if (error) {
-//        NSLog(@"%@", [NSString stringWithFormat:@"################Couldn't activate AVAudioSession. %@", error]);
-//    }
-//
-//    [[TVIAudioController sharedController] startAudio];
-//}
-
 RCT_EXPORT_METHOD(startLocalVideo:(BOOL)screenShare) {
   //  [TwilioVideo setLogLevel:TVILogLevelDebug];
   @try {
