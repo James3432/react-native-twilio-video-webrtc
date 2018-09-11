@@ -165,6 +165,18 @@ export default class extends Component {
     TWVideoModule.disconnect()
   }
 
+  startMetronome() {
+    TWVideoModule.startMetronome()
+  }
+
+  stopMetronome() {
+    TWVideoModule.stopMetronome()
+  }
+
+  setMetronomeTempo(tempo) {
+    TWVideoModule.setMetronomeTempo(tempo)
+  }
+
   _startLocalVideo() {
     const screenShare = this.props.screenShare || false
     try {

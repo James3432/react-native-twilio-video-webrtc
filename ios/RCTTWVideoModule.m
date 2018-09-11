@@ -203,6 +203,30 @@ RCT_EXPORT_METHOD(disconnect) {
   [self.room disconnect];
 }
 
+RCT_EXPORT_METHOD(startMetronome) {
+    if (@available(iOS 11_0, *)) {
+        [(ExampleAVAudioEngineDevice *)TwilioVideo.audioDevice startMetronome];
+    } else {
+        // Fallback on earlier versions
+    }
+}
+
+RCT_EXPORT_METHOD(stopMetronome) {
+    if (@available(iOS 11_0, *)) {
+        [(ExampleAVAudioEngineDevice *)TwilioVideo.audioDevice stopMetronome];
+    } else {
+        // Fallback on earlier versions
+    }
+}
+
+RCT_EXPORT_METHOD(setMetronomeTempo:(float)tempo) {
+    if (@available(iOS 11.0, *)) {
+        [(ExampleAVAudioEngineDevice *)TwilioVideo.audioDevice setTempo:tempo];
+    } else {
+        // Fallback on earlier versions
+    }
+}
+
 -(TVIVideoConstraints*) videoConstraints {
   return [TVIVideoConstraints constraintsWithBlock:^(TVIVideoConstraintsBuilder *builder) {
     builder.minSize = TVIVideoConstraintsSize960x540;

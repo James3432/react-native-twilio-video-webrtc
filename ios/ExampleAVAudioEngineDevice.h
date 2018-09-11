@@ -10,6 +10,8 @@
 NS_CLASS_AVAILABLE(NA, 11_0)
 @interface ExampleAVAudioEngineDevice : NSObject <TVIAudioDevice>
 
-- (void)playMusic;
+- (void)startMetronome;
+- (void)stopMetronome;
+- (void)setTempo: (float)tempo ;
 
 @end
