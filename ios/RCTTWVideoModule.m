@@ -107,13 +107,13 @@ RCT_EXPORT_MODULE();
 RCT_EXPORT_METHOD(startLocalVideo:(BOOL)screenShare) {
   //  [TwilioVideo setLogLevel:TVILogLevelDebug];
   @try {
-    // if (@available(iOS 11, *)) {
-    //   // iOS 11 (or newer) ObjC code
-    //   TwilioVideo.audioDevice = [[ExampleAVAudioEngineDevice alloc] init];
-    // } else {
-    //   // iOS 10 or older code
+    if (@available(iOS 11, *)) {
+      // iOS 11 (or newer) ObjC code
+      TwilioVideo.audioDevice = [[ExampleAVAudioEngineDevice alloc] init];
+    } else {
+      // iOS 10 or older code
       TwilioVideo.audioDevice = [TVIDefaultAudioDevice audioDevice];
-    // }
+    }
     
     
     [self logMessage:[NSString stringWithFormat:@"Start local video with screenshare %d", screenShare]];
