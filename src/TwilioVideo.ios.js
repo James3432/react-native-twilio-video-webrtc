@@ -205,6 +205,16 @@ export default class extends Component {
 
   _registerEvents() {
     this._subscriptions = [
+      this._eventEmitter.addListener('metronomeTickedUp', data => {
+        if (this.props.onMetronomeTicked) {
+          this.props.onMetronomeTicked({type: "up"})
+        }
+      }),
+      this._eventEmitter.addListener('metronomeTickedDown', data => {
+        if (this.props.onMetronomeTicked) {
+          this.props.onMetronomeTicked({type: "down"})
+        }
+      }),
       this._eventEmitter.addListener('roomDidConnect', data => {
         if (this.props.onRoomDidConnect) {
           this.props.onRoomDidConnect(data)

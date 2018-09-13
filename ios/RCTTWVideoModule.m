@@ -30,8 +30,10 @@ static NSString* cameraDidStart               = @"cameraDidStart";
 static NSString* cameraWasInterrupted        = @"cameraWasInterrupted";
 static NSString* cameraDidStopRunning         = @"cameraDidStopRunning";
 
+static NSString* metronomeTickedDown         = @"metronomeTickedDown";
+static NSString* metronomeTickedUp           = @"metronomeTickedUp";
 
-@interface RCTTWVideoModule () <TVIRemoteParticipantDelegate, TVIRoomDelegate, TVICameraCapturerDelegate>
+@interface RCTTWVideoModule () <TVIRemoteParticipantDelegate, TVIRoomDelegate, TVICameraCapturerDelegate, MetronomeDelegate>
 
 @property (strong, nonatomic) TVICameraCapturer *camera;
 @property (strong, nonatomic) TVIScreenCapturer *screen;
@@ -66,7 +68,9 @@ RCT_EXPORT_MODULE();
            participantDisabledTrack,
            cameraDidStopRunning,
            cameraDidStart,
-           cameraWasInterrupted
+           cameraWasInterrupted,
+           metronomeTickedUp,
+           metronomeTickedDown
            ];
 }
 
@@ -205,10 +209,20 @@ RCT_EXPORT_METHOD(disconnect) {
 
 RCT_EXPORT_METHOD(startMetronome) {
     if (@available(iOS 11_0, *)) {
-        [(ExampleAVAudioEngineDevice *)TwilioVideo.audioDevice startMetronome];
+        ExampleAVAudioEngineDevice *metronome = [(ExampleAVAudioEngineDevice *)TwilioVideo.audioDevice startMetronome];
+        metronome.delegate = self;
     } else {
         // Fallback on earlier versions
     }
+}
+
+#pragma mark- Delegate
+- (void)metronomeTicking:(ExampleAVAudioEngineDevice * _Nonnull)metronome bar:(int32_t)bar beat:(int32_t)beat {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self sendEventWithName:metronomeTickedDown body:nil];
+        NSLog(@"%d", bar);
+        NSLog(@"%d", beat);
+    });
 }
 
 RCT_EXPORT_METHOD(stopMetronome) {

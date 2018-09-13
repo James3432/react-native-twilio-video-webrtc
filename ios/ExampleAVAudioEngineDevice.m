@@ -88,7 +88,7 @@ static size_t kMaximumFramesPerBuffer = 3072;
     BOOL    _playing;
     BOOL    _playerStarted;
     
-//    id<MetronomeDelegate> __weak _delegate;
+    id<MetronomeDelegate> __weak _delegate;
 }
 
 @property (nonatomic, assign, getter=isInterrupted) BOOL interrupted;
@@ -276,16 +276,16 @@ static size_t kMaximumFramesPerBuffer = 3072;
     _engine = nil;
 }
 
-- (void)startMetronome {
+- (instancetype)startMetronome {
     [self metronomeInit];
     NSLog(@"HELOO");
     [self metronomeStart];
     NSLog(@"GO GO GO");
-    return;
+    return self;
     
     if (!_engine) {
         NSLog(@"Cannot play music. AudioEngine has not been created yet.");
-        return;
+        return self;
     }
 
     if (_player.isPlaying) {
@@ -315,6 +315,8 @@ static size_t kMaximumFramesPerBuffer = 3072;
 
     [_player scheduleFile:file atTime:nil completionHandler:^{}];
     [_player play];
+    
+    return self;
 }
 - (void)stopMetronome {
     [self metronomeStop];
@@ -325,7 +327,7 @@ static size_t kMaximumFramesPerBuffer = 3072;
             [_player stop];
         }
         [self.engine detachNode:self.player];
-        [self.engine detachNode:_reverb];
+//        [self.engine detachNode:_reverb];
         self.player = nil;
     }
 }
@@ -1025,19 +1027,19 @@ static OSStatus ExampleAVAudioEngineDeviceRecordCallback(void *refCon,
         
         // Schedule the delegate callback (metronomeTicking:bar:beat:) if necessary.
         int callbackBeat = _beatNumber++;
-//        if (_delegate && [_delegate respondsToSelector: @selector(metronomeTicking:bar:beat:)]) {
-//            AVAudioTime *nodeBeatTime = [_player nodeTimeForPlayerTime: playerBeatTime];
-//
-//            AVAudioIONode *output = _engine.outputNode;
-//
-//            //NSLog(@"%@ %@ %.6f", playerBeatTime, nodeBeatTime, output.presentationLatency);
-//            uint64_t latencyHostTicks = [AVAudioTime hostTimeForSeconds: output.presentationLatency];
-//            dispatch_after(dispatch_time(nodeBeatTime.hostTime + latencyHostTicks, 0), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//                // hardcoded to 4/4 meter
-//                if (_playing)
-//                    [_delegate metronomeTicking: self bar: (callbackBeat / 4) + 1 beat: (callbackBeat % 4) + 1];
-//            });
-//        }
+        if (_delegate && [_delegate respondsToSelector: @selector(metronomeTicking:bar:beat:)]) {
+            AVAudioTime *nodeBeatTime = [_player nodeTimeForPlayerTime: playerBeatTime];
+
+            AVAudioIONode *output = _engine.outputNode;
+
+            //NSLog(@"%@ %@ %.6f", playerBeatTime, nodeBeatTime, output.presentationLatency);
+            uint64_t latencyHostTicks = [AVAudioTime hostTimeForSeconds: output.presentationLatency];
+            dispatch_after(dispatch_time(nodeBeatTime.hostTime + latencyHostTicks, 0), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+                // hardcoded to 4/4 meter
+                if (_playing)
+                    [_delegate metronomeTicking: self bar: (callbackBeat / 4) + 1 beat: (callbackBeat % 4) + 1];
+            });
+        }
         
         _nextBeatSampleTime += samplesPerBeat;
     }
