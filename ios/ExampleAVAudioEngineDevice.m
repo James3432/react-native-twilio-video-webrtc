@@ -1052,6 +1052,7 @@ static OSStatus ExampleAVAudioEngineDeviceRecordCallback(void *refCon,
     _playing = YES;
     _nextBeatSampleTime = 0;
     _beatNumber = 0;
+    _beatsScheduled = 0;
     
     dispatch_sync(_syncQueue, ^{
         [self scheduleBeats];
